@@ -1,4 +1,26 @@
 @import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+/* ── Leaflet aesthetic overrides only ──────────────────────────────────── */
+/* Jangan override position/left/top — Leaflet set itu secara dinamis via JS */
+
+.leaflet-control-zoom {
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
+}
+.leaflet-popup-content-wrapper {
+  border-radius: 12px !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15) !important;
+  padding: 0 !important;
+  overflow: hidden;
+}
+.leaflet-popup-content {
+  margin: 0 !important;
+  width: 240px !important;
+}
+.leaflet-popup-tip-container {
+  margin-top: -1px;
+}
 
 @theme {
   --font-sans: var(--font-primary), system-ui, sans-serif;
@@ -52,3 +74,28 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* ── Custom Leaflet HTML Marker overrides ── */
+.custom-food-spot-marker, .user-gps-marker {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Premium styling for permanent map tooltips */
+.kulinira-tooltip {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid #ffedd5 !important;
+  border-radius: 8px !important;
+  padding: 4px 8px !important;
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.08) !important;
+  color: #1f2937 !important;
+  font-family: ui-sans-serif, system-ui, sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 10px !important;
+  white-space: nowrap;
+}
+.leaflet-tooltip-bottom::before {
+  border-bottom-color: rgba(255, 255, 255, 0.95) !important;
+}
+

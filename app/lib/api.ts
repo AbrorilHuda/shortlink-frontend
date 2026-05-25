@@ -191,3 +191,89 @@ export function deriveLinkStatus(link: ApiLink): LinkStatus {
   if (link.expiredAt && new Date(link.expiredAt) < new Date()) return 'expired'
   return 'aktif'
 }
+
+// ------------------------------------------------------------------
+// KuliNira – Food Spots endpoints
+// ------------------------------------------------------------------
+
+export type FoodSpotStatus = 'PENDING' | 'APPROVED' | 'REJECTED'
+
+export interface FoodSpot {
+  id: string
+  name: string
+  priceMin: number
+  priceMax: number
+  latitude: number
+  longitude: number
+  imageProofPath: string | null
+  imageUrl: string | null
+  status: FoodSpotStatus
+  createdAt: string
+}
+
+/** GET /tool/food-spots — Returns only APPROVED spots */
+export async function apiGetApprovedFoodSpots(): Promise<ApiResponse<FoodSpot[]>> {
+  return apiFetch<FoodSpot[]>('/tool/food-spots')
+}
+
+/** GET /tool/admin/food-spots/pending — Requires JWT */
+export async function apiGetPendingFoodSpots(): Promise<ApiResponse<FoodSpot[]>> {
+  return apiFetch<FoodSpot[]>('/tool/admin/food-spots/pending')
+}
+
+/** POST /tool/food-spots — multipart/form-data */
+export async function apiCreateFoodSpot(formData: FormData): Promise<ApiResponse<FoodSpot>> {
+  const token = getToken()
+  const headers: Record<string, string> = {}
+  if (token) headers['Authorization'] = `Bearer ${token}`
+
+  const res = await fetch(`${API_BASE}/tool/food-spots`, {
+    method: 'POST',
+    headers,
+    body: formData,
+  })
+  return res.json() as Promise<ApiResponse<FoodSpot>>
+}
+
+/** PATCH /tool/admin/food-spots/:id/status — Requires JWT */
+export async function apiUpdateFoodSpotStatus(
+  id: string,
+  status: 'APPROVED' | 'REJECTED'
+): Promise<ApiResponse<FoodSpot>> {
+  return apiFetch<FoodSpot>(`/tool/admin/food-spots/${id}/status`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status }),
+  })
+}
+
+/** DELETE /tool/admin/food-spots/:id — Requires JWT */
+export async function apiDeleteFoodSpot(id: string): Promise<ApiResponse<FoodSpot>> {
+  return apiFetch<FoodSpot>(`/tool/admin/food-spots/${id}`, {
+    method: 'DELETE',
+  })
+}
+
+/** GET /tool/admin/food-spots — Requires JWT (Gets all spots) */
+export async function apiGetAdminFoodSpots(): Promise<ApiResponse<FoodSpot[]>> {
+  return apiFetch<FoodSpot[]>('/tool/admin/food-spots')
+}
+
+export interface UpdateFoodSpotPayload {
+  name?: string
+  priceMin?: number
+  priceMax?: number
+  latitude?: number
+  longitude?: number
+}
+
+/** PATCH /tool/admin/food-spots/:id — Requires JWT */
+export async function apiUpdateFoodSpot(
+  id: string,
+  payload: UpdateFoodSpotPayload
+): Promise<ApiResponse<FoodSpot>> {
+  return apiFetch<FoodSpot>(`/tool/admin/food-spots/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+  })
+}
+
